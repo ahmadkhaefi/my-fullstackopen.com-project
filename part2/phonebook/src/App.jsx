@@ -1,14 +1,41 @@
-import {useEffect, useState} from 'react'
-import axios from 'axios'
+import {useEffect, useState, useContext, createContext} from 'react'
+import * as personService from './services/persons'
 
-const Table = ({persons}) => {
+const appContext = createContext()
+
+const TableItem = ({person}) => {
+	const {persons, setPersons} = useContext(appContext)
+
+	function deletePerson() {
+		if (confirm(`Are you sure you want to delete "${person.name}" (id: ${person.id})`)) {
+			personService
+				.remove(person.id)
+				.then(returnedPerson => {
+					setPersons(persons.filter(person => person.id !== returnedPerson.id))
+				})
+		}
+	}
+
+	return (
+		<>
+		<td>name: {person.name}</td>
+		<td>number: {person.number}</td>
+		<td>
+			<button onClick={deletePerson}>delete</button>
+		</td>
+		</>
+	)
+}
+
+const Table = ({personsToDisplay}) => {
+	const {persons} = useContext(appContext)
+
 	return (
 		<table>
 			<tbody>
-				{persons.map(person =>
-					<tr key={person.name}>
-						<td>name: {person.name}</td>
-						<td>number: {person.number}</td>
+				{personsToDisplay.map(person =>
+					<tr key={person.id}>
+						<TableItem person={person} persons={persons}/>
 					</tr>
 				)}
 			</tbody>
@@ -16,52 +43,13 @@ const Table = ({persons}) => {
 	)
 }
 
-const PersonForm = ({onSubmit, inputs}) => {
-	return (
-		<form onSubmit={onSubmit}>
-			{Object.entries(inputs).map(([label, input]) => (
-				<div key={label}>
-					{label}: <input value={input.value} onChange={input.handler}/>
-				</div>
-			))}
-			<div>
-				<button type="submit">add</button>
-			</div>
-		</form>
-	)
-}
-
-const Filter = ({onChange, persons}) => {
-	return (
-		<>
-		<input onChange={onChange}/>
-		<Table persons={persons}/>
-		</>
-	)
-}
-
-const Persons = ({persons}) => {
-	return (
-		<Table persons={persons}/>
-	)
-}
-
-const App = () => {
-	const [persons, setPersons] = useState([]) 
+const PersonForm = () => {
 	const [newPerson, setNewPerson] = useState({
 		name: '',
 		number: ''
 	})
-	const [searchResults, setSearchResults] = useState([])
 
-	useEffect(() => {
-		axios
-			.get('http://127.0.0.1:3001/persons')
-			.then(response => {
-				console.log()
-				setPersons(response.data)
-			})
-	}, [])
+	const {persons, setPersons} = useContext(appContext)
 
 	function handleNameInput(event) {
 		setNewPerson({
@@ -76,45 +64,109 @@ const App = () => {
 			number: event.target.value
 		})
 	}
-	
+
 	function addNewPerson(event) {
 		event.preventDefault()
 
 		if (persons.some(i => i.name === newPerson.name)) {
-			alert(`${newPerson.name} is already added to phonebook.`)
+			const replacePersonNumber = confirm(
+				`${newPerson.name} is already added to phonebook. Replace the old number with the new one?`
+			)
+
+			if (replacePersonNumber) {
+				const personWithSameName = persons.find(person => person.name === newPerson.name)
+				personWithSameName.number = newPerson.number
+
+				personService
+					.replaceNumber(personWithSameName)
+					.then(returnedPerson => {
+						setPersons(persons.filter(person => person.name === returnedPerson.name ? returnedPerson : person))
+						setNewPerson({name: '', number: ''})
+					})
+			}
 		} else {
-			setPersons([...persons, newPerson])
+			personService
+				.add(newPerson)
+				.then(returnedPerson => {
+					setPersons([...persons, returnedPerson])
+					setNewPerson({name: '', number: ''})
+				})
 		}
 	}
+	
+	return (
+		<form onSubmit={addNewPerson}>
+			<div>
+				name: <input value={newPerson.name} onChange={handleNameInput}/>
+			</div>
+			<div>
+				number: <input value={newPerson.number} onChange={handleNumberInput}/>
+			</div>
+			<div>
+				<button type="submit">add</button>
+			</div>
+		</form>
+	)
+}
+
+const Filter = () => {
+	const [query, setQuery] = useState('')
+
+	const {persons} = useContext(appContext)
 
 	function doSearch(event) {
-		const query = event.target.value.toLowerCase()
-
-		setSearchResults(persons.filter(i => i.name.toLowerCase().includes(query)))
+		setQuery(event.target.value.toLowerCase())
 	}
 
+	const searchResults = persons.filter(i => i.name.toLowerCase().includes(query))
+
 	return (
-	<div>
-		<h2>Phonebook</h2>
-		<div>
-			<h3>Filter</h3>
-			<Filter onChange={doSearch} persons={searchResults}/>
-		</div>
-		<div>
-			<h3>Add a New Person</h3>
-			<PersonForm
-				inputs={{
-					name: {handler: handleNameInput, value: newPerson.name},
-					number: {handler: handleNumberInput, value: newPerson.number}
-				}}
-				onSubmit={addNewPerson}
-			/>
-		</div>
-		<div>
-			<h3>Persons</h3>
-			<Persons persons={persons}/>
-		</div>
-	</div>
+		<>
+		<input onChange={doSearch}/>
+		<Table persons={persons} personsToDisplay={searchResults}/>
+		</>
+	)
+}
+
+const Persons = () => {
+	const {persons} = useContext(appContext)
+
+	return (
+		<Table persons={persons} personsToDisplay={persons}/>
+	)
+}
+
+const App = () => {
+	const [persons, setPersons] = useState([]) 
+
+	useEffect(() => {
+		personService
+			.all()
+			.then(initialPersons => {
+				setPersons(initialPersons)
+			})
+	}, [])
+
+	return (
+		<appContext.Provider value={{persons, setPersons}}>
+			<div>
+				<div>
+					<h3>Phonebook</h3>
+					<div>
+						<h3>Filter</h3>
+						<Filter/>
+					</div>
+				</div>
+				<div>
+					<h3>Add a New Person</h3>
+					<PersonForm/>
+				</div>
+				<div>
+					<h3>Persons</h3>
+					<Persons/>
+				</div>
+			</div>
+		</appContext.Provider>
 	)
 }
 
