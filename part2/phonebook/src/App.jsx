@@ -1,10 +1,11 @@
 import {useEffect, useState, useContext, createContext} from 'react'
 import * as personService from './services/persons'
+import Notification from './components/Notification'
 
 const appContext = createContext()
 
 const TableItem = ({person}) => {
-	const {persons, setPersons} = useContext(appContext)
+	const {persons, setPersons, setMessage} = useContext(appContext)
 
 	function deletePerson() {
 		if (confirm(`Are you sure you want to delete "${person.name}" (id: ${person.id})`)) {
@@ -12,6 +13,14 @@ const TableItem = ({person}) => {
 				.remove(person.id)
 				.then(returnedPerson => {
 					setPersons(persons.filter(person => person.id !== returnedPerson.id))
+				})
+				.catch(error => {
+					if (error.response.status) {
+						setMessage({
+							content: `${person.name} is already deleted.`,
+							type: 'error'
+						})
+					}
 				})
 		}
 	}
@@ -21,7 +30,7 @@ const TableItem = ({person}) => {
 		<td>name: {person.name}</td>
 		<td>number: {person.number}</td>
 		<td>
-			<button onClick={deletePerson}>delete</button>
+			<button onClick={deletePerson} className='text-button'>delete</button>
 		</td>
 		</>
 	)
@@ -49,7 +58,12 @@ const PersonForm = () => {
 		number: ''
 	})
 
-	const {persons, setPersons} = useContext(appContext)
+	const {
+		persons,
+		setPersons,
+		message,
+		setMessage
+	} = useContext(appContext)
 
 	function handleNameInput(event) {
 		setNewPerson({
@@ -82,6 +96,15 @@ const PersonForm = () => {
 					.then(returnedPerson => {
 						setPersons(persons.filter(person => person.name === returnedPerson.name ? returnedPerson : person))
 						setNewPerson({name: '', number: ''})
+						setMessage({content: 'Person updated successfully', type: 'success'})
+					})
+					.catch(error => {
+						if (error.response.status === 404) {
+							setMessage({
+								content: `${newPerson.name} is already deleted.`,
+								type: 'error'
+							})
+						}
 					})
 			}
 		} else {
@@ -90,20 +113,31 @@ const PersonForm = () => {
 				.then(returnedPerson => {
 					setPersons([...persons, returnedPerson])
 					setNewPerson({name: '', number: ''})
+					setMessage({content: 'Person added successfully', type: 'success'})
 				})
 		}
 	}
 	
 	return (
-		<form onSubmit={addNewPerson}>
+		<form onSubmit={addNewPerson} className='person-form'>
 			<div>
-				name: <input value={newPerson.name} onChange={handleNameInput}/>
+				<label>name</label>
+				<input
+				value={newPerson.name}
+				onChange={handleNameInput}
+				placeholder='name'
+				/>
 			</div>
 			<div>
-				number: <input value={newPerson.number} onChange={handleNumberInput}/>
+				<label>number</label>
+				<input
+				value={newPerson.number}
+				onChange={handleNumberInput}
+				placeholder='number'
+				/>
 			</div>
 			<div>
-				<button type="submit">add</button>
+				<button type="submit" className='block-button'>add</button>
 			</div>
 		</form>
 	)
@@ -122,7 +156,7 @@ const Filter = () => {
 
 	return (
 		<>
-		<input onChange={doSearch}/>
+		<input onChange={doSearch} placeholder="search for persons"/>
 		<Table persons={persons} personsToDisplay={searchResults}/>
 		</>
 	)
@@ -137,7 +171,11 @@ const Persons = () => {
 }
 
 const App = () => {
-	const [persons, setPersons] = useState([]) 
+	const [persons, setPersons] = useState([])
+	const [message, setMessage] = useState({
+		type: '',
+		content: ''
+	})
 
 	useEffect(() => {
 		personService
@@ -148,14 +186,20 @@ const App = () => {
 	}, [])
 
 	return (
-		<appContext.Provider value={{persons, setPersons}}>
+		<appContext.Provider
+		value={{
+			persons,
+			setPersons,
+			message,
+			setMessage
+		}}
+		>
 			<div>
+				<h1>Phonebook</h1>
+				<Notification message={message} setMessage={setMessage}/>
 				<div>
-					<h3>Phonebook</h3>
-					<div>
-						<h3>Filter</h3>
-						<Filter/>
-					</div>
+					<h3>Filter</h3>
+					<Filter/>
 				</div>
 				<div>
 					<h3>Add a New Person</h3>
