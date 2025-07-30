@@ -1,5 +1,6 @@
 import express from 'express'
 import morgan from 'morgan'
+import cors from 'cors'
 
 let persons = [
     {
@@ -27,6 +28,7 @@ let persons = [
 const app = express()
 
 app.use(express.json())
+app.use(cors())
 
 morgan.token('body', request => {
     return JSON.stringify(request.body)
@@ -67,9 +69,11 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
     const {id} = request.params
 
+    const person = persons.find(person => person.id === id)
+
     persons = persons.filter(person => person.id !== id)
 
-    response.status(204).end()
+    response.json(person)
 })
 
 app.post('/api/persons', (request, response) => {
@@ -89,7 +93,7 @@ app.post('/api/persons', (request, response) => {
             .json({error: 'name must be unique'})
     }
 
-    if (!name || !number) {
+    if (typeof name === 'undefined' || typeof number === 'undefined') {
         return response
             .status(400)
             .json({error: 'name or number missing'})
@@ -113,6 +117,8 @@ app.get('/info', (request, response) => {
     response.send(`Phone book has info for ${personsCount} people.<br/>${timeNow}`)
 })
 
-app.listen(3000, () => {
-    console.log(`Server running on http://127.0.0.1:3000.`)
+const PORT = process.env.PORT || 3000
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}.`)
 })
