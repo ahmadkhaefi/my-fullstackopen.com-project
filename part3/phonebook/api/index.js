@@ -1,6 +1,7 @@
-import express from 'express'
-import morgan from 'morgan'
-import cors from 'cors'
+const express = require('express')
+const morgan = require('morgan')
+const cors = require('cors')
+// const serverless = require('serverless-http')
 
 let persons = [
     {
@@ -117,8 +118,8 @@ app.get('/info', (request, response) => {
     response.send(`Phone book has info for ${personsCount} people.<br/>${timeNow}`)
 })
 
-const PORT = process.env.PORT || 3000
-
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}.`)
+app.listen(3000, () => {
+    console.log(`Server running on port 3000.`)
 })
+
+module.exports = app;
