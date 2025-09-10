@@ -27,11 +27,11 @@ let persons = [
 
 const app = express()
 
-app.use(json())
+app.use(express.json())
 app.use(cors())
 app.use(express.static('dist'))
 
-token('body', request => {
+morgan.token('body', request => {
     return JSON.stringify(request.body)
 })
 app.use(morgan((tokens, request, response) => {
@@ -122,4 +122,4 @@ app.listen(3000, () => {
     console.log(`Server running on port 3000.`)
 })
 
-export default app;
+export default app
