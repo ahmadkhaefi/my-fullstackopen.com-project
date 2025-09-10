@@ -1,6 +1,6 @@
-const express = require('express')
-const morgan = require('morgan')
-const cors = require('cors')
+import express from 'express'
+import morgan from 'morgan'
+import cors from 'cors'
 
 let persons = [
     {
@@ -27,11 +27,11 @@ let persons = [
 
 const app = express()
 
-app.use(express.json())
+app.use(json())
 app.use(cors())
 app.use(express.static('dist'))
 
-morgan.token('body', request => {
+token('body', request => {
     return JSON.stringify(request.body)
 })
 app.use(morgan((tokens, request, response) => {
@@ -122,4 +122,4 @@ app.listen(3000, () => {
     console.log(`Server running on port 3000.`)
 })
 
-module.exports = app;
+export default app;
