@@ -1,29 +1,8 @@
 import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
-
-let persons = [
-    {
-        "id": "1",
-        "name": "Arto Hellas",
-        "number": "040-123456"
-    },
-    {
-        "id": "2",
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523"
-    },
-    {
-        "id": "3",
-        "name": "Dan Abramov",
-        "number": "12-43-234345"
-    },
-    {
-        "id": "4",
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122"
-    }
-]
+import 'dotenv/config.js'
+import Person from './models/person.js'
 
 const app = express()
 
@@ -52,13 +31,17 @@ app.use((request, response, next) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.send(persons)
+    Person
+        .find({})
+        .then(persons => {
+            response.send(persons)
+        })
 })
 
-app.get('/api/persons/:id', (request, response, next) => {
+app.get('/api/persons/:id', async (request, response, next) => {
     const {id} = request.params
 
-    const person = persons.find(person => person.id === id)
+    const person = await Person.findById(id)
 
     if (!person) {
         return next()
@@ -70,14 +53,15 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
     const {id} = request.params
 
-    const person = persons.find(person => person.id === id)
+    console.log(id)
 
-    persons = persons.filter(person => person.id !== id)
-
-    response.json(person)
+    // Person.findByIdAndDelete(id)
+    //     .then(deletedPerson => {
+    //         response.json(deletedPerson)
+    //     })
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', async (request, response) => {
     function generateId() {
         const idLength = 20
 
@@ -88,7 +72,7 @@ app.post('/api/persons', (request, response) => {
 
     const {number, name} = request.body
 
-    if (persons.some(person => person.name === name)) {
+    if ((await Person.find({})).some(person => person.name === name)) {
         return response
             .status(400)
             .json({error: 'name must be unique'})
@@ -100,22 +84,24 @@ app.post('/api/persons', (request, response) => {
             .json({error: 'name or number missing'})
     }
 
-    const person = {
+    new Person({
         number,
         name,
         id: generateId()
-    }
-
-    persons.push(person)
-
-    response.send(person)
+    })
+        .save()
+        .then(savePerson => {
+            response.send(savePerson)
+        })
 })
 
 app.get('/info', (request, response) => {
-    const personsCount = persons.length
-    const timeNow = new Date()
+    Person.countDocuments()
+        .then(personsCount => {
+            const timeNow = new Date()
 
-    response.send(`Phone book has info for ${personsCount} people.<br/>${timeNow}`)
+            response.send(`Phone book has info for ${personsCount} people.<br/>${timeNow}`)
+        })
 })
 
 app.listen(3000, () => {
