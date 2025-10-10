@@ -6,5 +6,10 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: '../../part3/phonebook/dist',
+  },
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3000'
+    }
   }
 })

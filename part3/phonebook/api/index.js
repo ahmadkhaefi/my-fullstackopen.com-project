@@ -8,57 +8,63 @@ const app = express()
 
 app.use(express.json())
 app.use(cors())
-app.use(express.static('dist'))
 
-morgan.token('body', request => {
-    return JSON.stringify(request.body)
-})
-app.use(morgan((tokens, request, response) => {
-    return [
-        tokens.method(request, response),
-        tokens.url(request, response),
-        tokens.status(request, response),
-        tokens.res(request, response, 'content-length'), '-',
-        tokens['response-time'](request, response), 'ms',
-        tokens['body'](request, response)
-    ].join(' ')
-}))
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('dist'))
+}
 
-app.use((request, response, next) => {
-    console.log(request.url, request.method, request.body, new Date())
+// morgan.token('body', request => {
+//     return JSON.stringify(request.body)
+// })
+// app.use(morgan((tokens, request, response) => {
+//     return [
+//         tokens.method(request, response),
+//         tokens.url(request, response),
+//         tokens.status(request, response),
+//         tokens.res(request, response, 'content-length'), '-',
+//         tokens['response-time'](request, response), 'ms',
+//         tokens['body'](request, response)
+//     ].join(' ')
+// }))
 
-    next()
-})
+// app.use((request, response, next) => {
+//     console.log(request.url, request.method, request.body, new Date())
+
+//     next()
+// })
 
 app.get('/api/persons', (request, response) => {
     Person
         .find({})
         .then(persons => {
-            response.send(persons)
+            response.json(persons)
         })
 })
 
 app.get('/api/persons/:id', async (request, response, next) => {
     const {id} = request.params
 
-    const person = await Person.findById(id)
+    try {
+        const person = await Person.findById(id)
 
-    if (!person) {
-        return next()
+        if (!person) {
+            return next()
+        }
+
+        response.json(person)
+    } catch (error) {
+        next(error)
     }
-
-    response.send(person)
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
     const {id} = request.params
 
-    console.log(id)
-
-    // Person.findByIdAndDelete(id)
-    //     .then(deletedPerson => {
-    //         response.json(deletedPerson)
-    //     })
+    Person.findByIdAndDelete(id)
+        .then(deletedPerson => {
+            response.json(deletedPerson)
+        })
+        .catch(error => next(error))
 })
 
 app.post('/api/persons', async (request, response) => {
@@ -95,6 +101,26 @@ app.post('/api/persons', async (request, response) => {
         })
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+    const {id} = request.params
+    const {number} = request.body
+
+    Person.findById(id)
+        .then(person => {
+            if (!person) {
+                return next()
+            }
+            
+            person.number = number
+
+            person.save()
+                .then(returnedPerson => {
+                    response.json(returnedPerson)
+                })
+        })
+        .catch(error => next(error))
+})
+
 app.get('/info', (request, response) => {
     Person.countDocuments()
         .then(personsCount => {
@@ -102,6 +128,20 @@ app.get('/info', (request, response) => {
 
             response.send(`Phone book has info for ${personsCount} people.<br/>${timeNow}`)
         })
+})
+
+// requests with unknown endpoint middleware (404 errors)
+app.use((request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+})
+
+// error handling middleware (500 errors)
+app.use((error, request, response, next) => {
+    if (error.name === 'CastError') {
+        return response.status(400).send({error: 'mal-formatted id'})
+    }
+
+    next(error)
 })
 
 app.listen(3000, () => {
