@@ -2,7 +2,7 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 import 'dotenv/config.js'
-import Person from './models/person.js'
+import Person, {connectDB} from './models/person.js'
 
 const app = express()
 
@@ -34,10 +34,13 @@ if (process.env.NODE_ENV === 'production') {
 // })
 
 app.get('/api/persons', (request, response) => {
-    Person
-        .find({})
-        .then(persons => {
-            response.json(persons)
+    connectDB()
+        .then(() => {
+            Person
+                .find({})
+                .then(persons => {
+                    response.json(persons)
+                })
         })
 })
 
@@ -45,6 +48,7 @@ app.get('/api/persons/:id', async (request, response, next) => {
     const {id} = request.params
 
     try {
+        await connectDB()
         const person = await Person.findById(id)
 
         if (!person) {
@@ -60,21 +64,18 @@ app.get('/api/persons/:id', async (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
     const {id} = request.params
 
-    Person.findByIdAndDelete(id)
-        .then(deletedPerson => {
-            response.json(deletedPerson)
+    connectDB()
+        .then(() => {
+            Person.findByIdAndDelete(id)
+                .then(deletedPerson => {
+                    response.json(deletedPerson)
+                })
+                .catch(error => next(error))
         })
-        .catch(error => next(error))
 })
 
 app.post('/api/persons', async (request, response) => {
-    function generateId() {
-        const idLength = 20
-
-        return (Math.random() * (10 ** idLength))
-            .toString(16)
-            .substring(0, idLength)
-    }
+    await connectDB()
 
     const {number, name} = request.body
 
@@ -101,7 +102,9 @@ app.post('/api/persons', async (request, response) => {
         })
 })
 
-app.put('/api/persons/:id', (request, response, next) => {
+app.put('/api/persons/:id', async (request, response, next) => {
+    await connectDB()
+
     const {id} = request.params
     const {number} = request.body
 
@@ -121,7 +124,9 @@ app.put('/api/persons/:id', (request, response, next) => {
         .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
+app.get('/info', async (request, response) => {
+    await connectDB()
+
     Person.countDocuments()
         .then(personsCount => {
             const timeNow = new Date()
