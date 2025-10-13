@@ -74,7 +74,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
         })
 })
 
-app.post('/api/persons', async (request, response) => {
+app.post('/api/persons', async (request, response, next) => {
     await connectDB()
 
     const {number, name} = request.body
@@ -85,21 +85,15 @@ app.post('/api/persons', async (request, response) => {
             .json({error: 'name must be unique'})
     }
 
-    if (typeof name === 'undefined' || typeof number === 'undefined') {
-        return response
-            .status(400)
-            .json({error: 'name or number missing'})
-    }
-
     new Person({
         number,
-        name,
-        id: generateId()
+        name
     })
         .save()
         .then(savePerson => {
             response.send(savePerson)
         })
+        .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', async (request, response, next) => {
@@ -144,6 +138,8 @@ app.use((request, response) => {
 app.use((error, request, response, next) => {
     if (error.name === 'CastError') {
         return response.status(400).send({error: 'mal-formatted id'})
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).send({error: error.message})
     }
 
     next(error)

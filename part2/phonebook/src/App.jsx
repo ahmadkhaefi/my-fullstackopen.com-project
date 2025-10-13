@@ -115,6 +115,12 @@ const PersonForm = () => {
 					setNewPerson({name: '', number: ''})
 					setMessage({content: 'Person added successfully', type: 'success'})
 				})
+				.catch(error => {
+					setMessage({
+						content: error.response.data.error,
+						type: 'error'
+					})
+				})
 		}
 	}
 	
