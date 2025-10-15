@@ -1,5 +1,5 @@
 import express from 'express'
-import morgan from 'morgan'
+// import morgan from 'morgan'
 import cors from 'cors'
 import 'dotenv/config.js'
 import Person, {connectDB} from './models/person.js'
@@ -131,7 +131,7 @@ app.get('/info', async (request, response) => {
 
 // requests with unknown endpoint middleware (404 errors)
 app.use((request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
+    response.status(404).send({ error: 'unknown endpoint' })
 })
 
 // error handling middleware (500 errors)
@@ -146,7 +146,7 @@ app.use((error, request, response, next) => {
 })
 
 app.listen(3000, () => {
-    console.log(`Server running on port 3000.`)
+    console.log('Server running on port 3000.')
 })
 
 export default app
