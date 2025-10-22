@@ -37,6 +37,33 @@ test('id the unique identifier property', async () => {
     }
 })
 
+test('a valid blog can be added', async () => {
+    const newBlog = {
+        title: 'Go To Statement Considered Harmful',
+        author: 'Edsger W. Dijkstra',
+        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+        likes: 5
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await blogsInDb()
+
+    assert.strictEqual(blogsAtEnd.length, blogs.length + 1)
+    
+    assert(blogsAtEnd.some(blog => {
+        const blogObject = blog.toJSON()
+
+        delete blogObject.id
+
+        return JSON.stringify(blogObject) === JSON.stringify(newBlog)
+    }))
+})
+
 after(async () => {
     await mongoose.connection.close()
 })

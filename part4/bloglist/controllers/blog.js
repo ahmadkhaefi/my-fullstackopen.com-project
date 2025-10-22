@@ -9,12 +9,11 @@ blogRoute.get('/', async (request, response) => {
     response.json(blogs)
 })
 
-blogRoute.post('/', (request, response) => {
+blogRoute.post('/', async (request, response) => {
     const blog = new Blog(request.body)
+    const newBlog = await blog.save()
 
-    blog.save().then((result) => {
-      response.status(201).json(result)
-    })
+    response.status(201).json(newBlog)
 })
 
 export default blogRoute
