@@ -1,3 +1,5 @@
+import Blog from '../models/blog.js'
+
 export const blogs = [
     {
         _id: "5a422a851b54a676234d17f7",
@@ -60,3 +62,6 @@ export const listWithOneBlog = [
     }
 ]
 
+export async function blogsInDb() {
+    return await Blog.find({})
+}

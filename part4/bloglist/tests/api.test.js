@@ -4,7 +4,8 @@ import assert from 'node:assert'
 import supertest from 'supertest'
 import app from '../app.js'
 import Blog from '../models/blog.js'
-import {blogs} from './test_helper.js'
+import {blogs, blogsInDb} from './test_helper.js'
+
 
 const api = supertest(app)
 
@@ -23,6 +24,17 @@ test('all blogs can be retrieved from database', async () => {
         .expect('Content-Type', /application\/json/)
 
     assert.strictEqual(response.body.length, blogs.length)
+})
+
+test('id the unique identifier property', async () => {
+    const response = await api.get('/api/blogs')
+    const ids = response.body.map(b => b.id)
+
+    for (const id of ids) {
+        const {_id} = await Blog.findById(id)
+
+        assert.strictEqual(_id.toString(), id)
+    }
 })
 
 after(async () => {
