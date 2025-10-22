@@ -1,10 +1,16 @@
 import {Schema, model} from 'mongoose'
 
 const blogSchema = Schema({
-    title: String,
+    title: {
+        type: String,
+        required: true
+    },
+    url: {
+        type: String,
+        required: true
+    },
     author: String,
-    url: String,
-    likes: Number,
+    likes: Number
 })
 
 blogSchema.set('toJSON', {

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import {beforeEach, test, after} from 'node:test'
+import {beforeEach, test, after, describe} from 'node:test'
 import assert from 'node:assert'
 import supertest from 'supertest'
 import app from '../app.js'
@@ -57,7 +57,7 @@ test('a valid blog can be added', async () => {
     }))
 })
 
-test('a blog without like can be added and likes defaulted to 0', async () => {
+test('a blog without likes can be added and likes defaulted to 0', async () => {
     const newBlog = structuredClone(singleBlog)
 
     delete newBlog.likes
@@ -72,6 +72,42 @@ test('a blog without like can be added and likes defaulted to 0', async () => {
     const addedBlog = blogsAtEnd.find(blog => blog.title === newBlog.title)
 
     assert.strictEqual(addedBlog.likes, 0)
+})
+
+describe('a blog without url and title cannot be saved', () => {
+    async function testInvalidBlog(blog) {
+        await api
+            .post('/api/blogs')
+            .send(blog)
+            .expect(400)
+    }
+
+    test('without url', async () => {
+        const newBlog = structuredClone(singleBlog)
+
+        delete newBlog.url
+
+        await testInvalidBlog(newBlog)
+
+    })
+
+    test('without title', async () => {
+        const newBlog = structuredClone(singleBlog)
+
+        delete newBlog.title
+
+        await testInvalidBlog(newBlog)
+
+    })
+
+    test('without title and url', async () => {
+        const newBlog = structuredClone(singleBlog)
+
+        delete newBlog.title
+        delete newBlog.url
+
+        await testInvalidBlog(newBlog)
+    })
 })
 
 after(async () => {
