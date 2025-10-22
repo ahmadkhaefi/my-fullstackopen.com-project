@@ -1,12 +1,12 @@
 import {Router} from 'express'
-import {Blog} from '../models/blog.js'
+import Blog from '../models/blog.js'
 
 const blogRoute = Router()
 
-blogRoute.get('/', (request, response) => {
-    Blog.find({}).then((blogs) => {
-      response.json(blogs)
-    })
+blogRoute.get('/', async (request, response) => {
+    const blogs = await Blog.find({})
+
+    response.json(blogs)
 })
 
 blogRoute.post('/', (request, response) => {

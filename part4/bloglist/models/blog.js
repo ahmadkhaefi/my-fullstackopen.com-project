@@ -16,4 +16,7 @@ blogSchema.set('toJSON', {
     }
 })
 
-export const Blog = model('Blog', blogSchema)
+/** @type {import('mongoose').Model} */
+const Blog = model('Blog', blogSchema)
+
+export default Blog
