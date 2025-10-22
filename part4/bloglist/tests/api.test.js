@@ -4,7 +4,7 @@ import assert from 'node:assert'
 import supertest from 'supertest'
 import app from '../app.js'
 import Blog from '../models/blog.js'
-import {blogs, blogsInDb} from './test_helper.js'
+import {blogs, blogsInDb, singleBlog} from './test_helper.js'
 
 
 const api = supertest(app)
@@ -38,16 +38,9 @@ test('id the unique identifier property', async () => {
 })
 
 test('a valid blog can be added', async () => {
-    const newBlog = {
-        title: 'Go To Statement Considered Harmful',
-        author: 'Edsger W. Dijkstra',
-        url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
-        likes: 5
-    }
-
     await api
         .post('/api/blogs')
-        .send(newBlog)
+        .send(singleBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
@@ -60,8 +53,25 @@ test('a valid blog can be added', async () => {
 
         delete blogObject.id
 
-        return JSON.stringify(blogObject) === JSON.stringify(newBlog)
+        return JSON.stringify(blogObject) === JSON.stringify(singleBlog)
     }))
+})
+
+test('a blog without like can be added and likes defaulted to 0', async () => {
+    const newBlog = structuredClone(singleBlog)
+
+    delete newBlog.likes
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await blogsInDb()
+    const addedBlog = blogsAtEnd.find(blog => blog.title === newBlog.title)
+
+    assert.strictEqual(addedBlog.likes, 0)
 })
 
 after(async () => {

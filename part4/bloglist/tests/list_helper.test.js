@@ -11,11 +11,11 @@ test('dummy returns one', () => {
 
 describe('total likes', () => {
     test('when list has only one blog, equals the likes of that', () => {
-        strictEqual(totalLikes(listWithOneBlog), 5)
+        strictEqual(totalLikes(listWithOneBlog), 2)
     })
 
     test('calculate all likes', () => {
-        strictEqual(totalLikes(blogs), 36)
+        strictEqual(totalLikes(blogs), 29)
     })
 })
 
@@ -25,7 +25,7 @@ describe('favorite blog', () => {
     })
 
     test('favorite blog in a generic list', () => {
-        deepStrictEqual(favoriteBlog(blogs), blogs[2])
+        deepStrictEqual(favoriteBlog(blogs), blogs[1])
     })
 })
 
@@ -34,8 +34,8 @@ describe('author with most blogs', () => {
         deepStrictEqual(
             mostBlogs(blogs),
             {
-                author: "Robert C. Martin",
-                blogs: 3
+                author: 'Robert C. Martin',
+                blogs: 2
             }
         )
     })
@@ -46,8 +46,8 @@ describe('author with most likes', () => {
         deepStrictEqual(
             mostLikes(blogs),
             {
-                author: "Edsger W. Dijkstra",
-                likes: 17
+                author: 'Edsger W. Dijkstra',
+                likes: 12
             }
         )
     })
