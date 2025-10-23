@@ -44,3 +44,16 @@ export const listWithOneBlog = [{
 export async function blogsInDb() {
     return await Blog.find({})
 }
+
+export async function nonExistingBlogId() {
+    const blog = new Blog({
+        url: 'URL',
+        author: 'AUTHOR',
+        title: 'TITLE'
+    })
+
+    await blog.save()
+    await blog.deleteOne()
+
+    return blog._id.toString()
+}

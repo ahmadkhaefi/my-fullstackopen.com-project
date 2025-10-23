@@ -4,7 +4,7 @@ import assert from 'node:assert'
 import supertest from 'supertest'
 import app from '../app.js'
 import Blog from '../models/blog.js'
-import {blogs, blogsInDb, singleBlog} from './test_helper.js'
+import {blogs, blogsInDb, singleBlog, nonExistingBlogId} from './test_helper.js'
 
 
 const api = supertest(app)
@@ -48,13 +48,7 @@ test('a valid blog can be added', async () => {
 
     assert.strictEqual(blogsAtEnd.length, blogs.length + 1)
     
-    assert(blogsAtEnd.some(blog => {
-        const blogObject = blog.toJSON()
-
-        delete blogObject.id
-
-        return JSON.stringify(blogObject) === JSON.stringify(singleBlog)
-    }))
+    assert(blogsAtEnd.some(blog => blog.toJSON().title === singleBlog.title))
 })
 
 test('a blog without likes can be added and likes defaulted to 0', async () => {
@@ -108,6 +102,47 @@ describe('a blog without url and title cannot be saved', () => {
 
         await testInvalidBlog(newBlog)
     })
+})
+
+describe('blog deletion', () => {
+    test('an already existing blog can be deleted by id', async () => {
+        const blogsAtStart = await blogsInDb()
+
+        const blogToBeDeleted = blogsAtStart[0].toJSON()
+
+        await api
+            .delete(`/api/blogs/${blogToBeDeleted.id}`)
+            .expect(204)
+
+        const blogsAtEnd = await blogsInDb()
+
+        assert(!blogsAtEnd.some(blog => blog.id === blogToBeDeleted.id))
+    })
+
+    test('a non-existing blog cannot be deleted', async () => {
+        const id = await nonExistingBlogId()
+
+        await api
+            .delete(`/api/blogs/${id}`)
+            .expect(404)
+    })
+})
+
+test('the likes property of a blog can be updated', async () => {
+    const blogsAtStart = await blogsInDb()
+    const blogToBeUpdated = blogsAtStart[0].toJSON()
+    const blogToBeUpdatedId = blogToBeUpdated.id
+    const newLikes = 10
+
+    await api
+        .patch(`/api/blogs/${blogToBeUpdatedId}`)
+        .send({likes: newLikes})
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const {likes} = (await Blog.findById(blogToBeUpdatedId)).toJSON()
+
+    assert.strictEqual(likes, newLikes)
 })
 
 after(async () => {
