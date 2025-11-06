@@ -1,4 +1,4 @@
-import {Schema, model} from 'mongoose'
+import mongoose, {Schema, model} from 'mongoose'
 import ERROR_CODES from '../utils/ERROR_CODES.js'
 
 const userSchema = Schema({
@@ -9,6 +9,10 @@ const userSchema = Schema({
         minLength: [3, ERROR_CODES.API.USER.USERNAME.USERNAME_TOO_SHORT.code]
     },
     name: String,
+    blogs: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Blog'
+    }],
     passwordHash: String
 })
 

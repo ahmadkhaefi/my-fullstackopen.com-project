@@ -6,7 +6,9 @@ import ERROR_CODES from '../utils/ERROR_CODES.js'
 const userRouter = Router()
 
 userRouter.get('/', async (request, response) => {
-    const users = await User.find({})
+    const users = await User.find({}).populate('blogs', {
+        author: 0
+    })
 
     response.json(users)
 })

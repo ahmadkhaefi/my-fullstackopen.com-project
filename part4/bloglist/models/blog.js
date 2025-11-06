@@ -9,7 +9,10 @@ const blogSchema = Schema({
         type: String,
         required: true
     },
-    author: String,
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
     likes: Number
 })
 
