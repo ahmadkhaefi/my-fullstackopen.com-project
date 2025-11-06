@@ -1,15 +1,15 @@
 import {Router} from 'express'
 import Blog from '../models/blog.js'
 
-const blogRoute = Router()
+const blogRouter = Router()
 
-blogRoute.get('/', async (request, response) => {
+blogRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({})
 
     response.json(blogs)
 })
 
-blogRoute.post('/', async (request, response) => {
+blogRouter.post('/', async (request, response) => {
     const {
         title,
         author,
@@ -23,7 +23,7 @@ blogRoute.post('/', async (request, response) => {
     response.status(201).json(newBlog)
 })
 
-blogRoute.delete('/:id', async (request, response, next) => {
+blogRouter.delete('/:id', async (request, response, next) => {
     const {id} = request.params
 
     const deletedBlog = await Blog.findByIdAndDelete(id)
@@ -35,7 +35,7 @@ blogRoute.delete('/:id', async (request, response, next) => {
     response.status(204).end()
 })
 
-blogRoute.patch('/:id', async (request, response) => {
+blogRouter.patch('/:id', async (request, response) => {
     const {likes} = request.body
     const {id} = request.params
 
@@ -52,4 +52,4 @@ blogRoute.patch('/:id', async (request, response) => {
     response.send(updatedBlog)
 })
 
-export default blogRoute
+export default blogRouter

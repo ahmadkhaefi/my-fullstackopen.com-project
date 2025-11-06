@@ -1,4 +1,5 @@
 import Blog from '../models/blog.js'
+import User from '../models/user.js'
 
 export const blogs = [
     {
@@ -57,3 +58,8 @@ export async function nonExistingBlogId() {
 
     return blog._id.toString()
 }
+
+export async function usersInDb() {
+    return await User.find({})
+}
+

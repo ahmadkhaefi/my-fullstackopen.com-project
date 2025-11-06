@@ -1,13 +1,9 @@
 import mongoose from 'mongoose'
 import {beforeEach, test, after, describe} from 'node:test'
 import assert from 'node:assert'
-import supertest from 'supertest'
-import app from '../app.js'
 import Blog from '../models/blog.js'
 import {blogs, blogsInDb, singleBlog, nonExistingBlogId} from './test_helper.js'
-
-
-const api = supertest(app)
+import api from './api.js'
 
 beforeEach(async () => {
     await Blog.deleteMany({})

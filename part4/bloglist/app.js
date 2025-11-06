@@ -1,6 +1,9 @@
 import express, {json} from 'express'
 import mongoose from 'mongoose'
 import blogRouter from './controllers/blog.js'
+import userRouter from './controllers/user.js'
+import * as logger from './utils/logger.js'
+import * as middlewares from './utils/middlewares.js'
 import './mongodb.js'
 
 const app = express()
@@ -9,12 +12,9 @@ app.use(json())
 
 // Routes
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', userRouter)
 
-// error handling
-app.use((error, request, response, next) => {
-    if (error instanceof mongoose.Error.ValidationError) {
-        response.status(400).end()
-    }
-})
+// Middlewares
+app.use(middlewares.errorHandler)
 
 export default app
