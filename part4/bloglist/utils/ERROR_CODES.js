@@ -23,7 +23,15 @@ export default {
             },
             USERNAME_OR_PASSWORD_NOT_VALID: {
                 code: 'USERNAME_OR_PASSWORD_NOT_VALID',
-                message: 'Username or password is not valid'
+                message: 'Username or password is not valid.'
+            },
+            TOKEN_NOT_VALID: {
+                code: 'TOKEN_NOT_VALID',
+                message: 'JWT token is not valid.'
+            },
+            USER_NOT_FOUND: {
+                code: 'USER_NOT_FOUND',
+                message: 'User is not found.'
             }
         }
     }
