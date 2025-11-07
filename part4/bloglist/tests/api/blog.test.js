@@ -1,9 +1,9 @@
 import mongoose from 'mongoose'
 import {beforeEach, test, after, describe} from 'node:test'
 import assert from 'node:assert'
-import Blog from '../models/blog.js'
-import User from '../models/user.js'
-import * as helper from './test_helper.js'
+import Blog from '../../models/blog.js'
+import User from '../../models/user.js'
+import * as helper from '../helper.js'
 import api from './api.js'
 
 beforeEach(async () => {

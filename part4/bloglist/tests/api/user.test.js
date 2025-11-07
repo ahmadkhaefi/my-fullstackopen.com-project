@@ -2,10 +2,10 @@ import mongoose from 'mongoose'
 import {beforeEach, test, after, describe} from 'node:test'
 import assert from 'node:assert'
 import bcrypt from 'bcrypt'
-import User from '../models/user.js'
+import User from '../../models/user.js'
 import api from './api.js'
-import ERROR_CODES from '../utils/ERROR_CODES.js'
-import * as helper from './test_helper.js'
+import ERROR_CODES from '../../utils/ERROR_CODES.js'
+import * as helper from '../helper.js'
 
 describe('user creation', () => {
     beforeEach(async () => {

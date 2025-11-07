@@ -1,7 +1,7 @@
 import {test, describe} from 'node:test'
 import {deepStrictEqual, strictEqual} from 'node:assert'
 import {dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes} from '../utils/list_helper.js'
-import * as helper from './test_helper.js'
+import * as helper from './helper.js'
 
 test('dummy returns one', () => {
     const blogs = []
