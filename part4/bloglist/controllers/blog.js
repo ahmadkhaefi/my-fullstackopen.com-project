@@ -1,8 +1,7 @@
 import {json, Router} from 'express'
-import jwt from 'jsonwebtoken'
 import Blog from '../models/blog.js'
-import User from '../models/user.js'
 import ERROR_CODES from '../utils/ERROR_CODES.js'
+import {authorization} from '../utils/middlewares.js'
 
 const blogRouter = Router()
 
@@ -15,38 +14,7 @@ blogRouter.get('/', async (request, response) => {
 })
 
 // jwt token authorization middleware
-blogRouter.use(async (request, response, next) => {
-    let token = request.header('authorization')
-    const bearerPattern = /^bearer\s/i
-
-    if (bearerPattern.test(token)) {
-        token = token.replace(bearerPattern, '')    
-    }
-
-
-    const decoded = jwt.verify(token, process.env.JWT)
-
-    if (!decoded) {
-        return response
-            .status(401)
-            .json({
-                error: ERROR_CODES.API.USER.TOKEN_NOT_VALID
-            })
-    }
-
-    const user = await User.findById(decoded.id)
-
-    if (!user) {
-        return response
-            .status(400)
-            .json({
-                error: ERROR_CODES.API.USER.USER_NOT_FOUND
-            })
-    }
-
-    request.author = user
-    next()
-})
+blogRouter.use(authorization)
 
 blogRouter.post('/', async (request, response) => {
     const {author} = request
@@ -69,14 +37,32 @@ blogRouter.post('/', async (request, response) => {
     response.status(201).json(newBlog)
 })
 
+// jwt authorization
+blogRouter.use(authorization)
+
 blogRouter.delete('/:id', async (request, response, next) => {
+    const {id: authorId} = request.author
     const {id} = request.params
 
-    const deletedBlog = await Blog.findByIdAndDelete(id)
+    const blog = await Blog.findById(id)
 
-    if (!deletedBlog) {
-        return next()
+    if (!blog) {
+        return response
+            .status(404)
+            .json({
+                error: ERROR_CODES.API.BLOG.BLOG_NOT_FOUND
+            })
     }
+
+    if (blog.author.toString() !== authorId) {
+        return response
+            .status(403)
+            .json({
+                error: ERROR_CODES.API.BLOG.UNAUTHORIZED_DELETION
+            })
+    }
+
+    await blog.deleteOne()
 
     response.status(204).end()
 })

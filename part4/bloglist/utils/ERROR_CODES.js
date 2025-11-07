@@ -33,6 +33,16 @@ export default {
                 code: 'USER_NOT_FOUND',
                 message: 'User is not found.'
             }
+        },
+        BLOG: {
+            BLOG_NOT_FOUND: {
+                code: 'BLOG_NOT_FOUND',
+                message: 'Blog is not found.'
+            },
+            UNAUTHORIZED_DELETION: {
+                code: 'UNAUTHORIZED_DELETION',
+                message: 'User is not authorized to delete this blog.'
+            }
         }
     }
 }
