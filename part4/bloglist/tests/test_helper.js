@@ -1,5 +1,6 @@
 import Blog from '../models/blog.js'
 import User from '../models/user.js'
+import jwt from 'jsonwebtoken'
 
 export const blogs = [
     {
@@ -28,13 +29,6 @@ export const blogs = [
     } 
 ]
 
-export const singleBlog = {
-    title: 'Go To Statement Considered Harmful',
-    author: 'Edsger W. Dijkstra',
-    url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
-    likes: 5
-}
-
 export const listWithOneBlog = [{
     title: 'Type wars',
     author: 'Robert C. Martin',
@@ -47,9 +41,11 @@ export async function blogsInDb() {
 }
 
 export async function nonExistingBlogId() {
+    const author = await User.find({username: 'root'})
+
     const blog = new Blog({
         url: 'URL',
-        author: 'AUTHOR',
+        author: author.id,
         title: 'TITLE'
     })
 
@@ -63,3 +59,13 @@ export async function usersInDb() {
     return await User.find({})
 }
 
+export async function generateAuthorToken() {
+    const author = await User.findOne({username: 'root'})
+
+    const token = jwt.sign({
+        username: author.username,
+        id: author.id
+    }, process.env.JWT)
+
+    return token
+}

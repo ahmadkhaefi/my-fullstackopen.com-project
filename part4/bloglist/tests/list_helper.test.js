@@ -1,7 +1,7 @@
 import {test, describe} from 'node:test'
 import {deepStrictEqual, strictEqual} from 'node:assert'
 import {dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes} from '../utils/list_helper.js'
-import {blogs, listWithOneBlog} from './test_helper.js'
+import * as helper from './test_helper.js'
 
 test('dummy returns one', () => {
     const blogs = []
@@ -11,28 +11,28 @@ test('dummy returns one', () => {
 
 describe('total likes', () => {
     test('when list has only one blog, equals the likes of that', () => {
-        strictEqual(totalLikes(listWithOneBlog), 2)
+        strictEqual(totalLikes(helper.listWithOneBlog), 2)
     })
 
     test('calculate all likes', () => {
-        strictEqual(totalLikes(blogs), 29)
+        strictEqual(totalLikes(helper.blogs), 29)
     })
 })
 
 describe('favorite blog', () => {
     test('the favorite blog in a single-blog list', () => {
-        deepStrictEqual(favoriteBlog(listWithOneBlog), listWithOneBlog[0])
+        deepStrictEqual(favoriteBlog(helper.listWithOneBlog), helper.listWithOneBlog[0])
     })
 
     test('favorite blog in a generic list', () => {
-        deepStrictEqual(favoriteBlog(blogs), blogs[1])
+        deepStrictEqual(favoriteBlog(helper.blogs), helper.blogs[1])
     })
 })
 
 describe('author with most blogs', () => {
     test('author with most blogs', () => {
         deepStrictEqual(
-            mostBlogs(blogs),
+            mostBlogs(helper.blogs),
             {
                 author: 'Robert C. Martin',
                 blogs: 2
@@ -44,7 +44,7 @@ describe('author with most blogs', () => {
 describe('author with most likes', () => {
     test('author with most likes', () => {
         deepStrictEqual(
-            mostLikes(blogs),
+            mostLikes(helper.blogs),
             {
                 author: 'Edsger W. Dijkstra',
                 likes: 12
