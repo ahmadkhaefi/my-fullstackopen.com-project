@@ -1,7 +1,7 @@
-import {json, Router} from 'express'
+import {Router} from 'express'
 import Blog from '../models/blog.js'
 import ERROR_CODES from '../utils/ERROR_CODES.js'
-import {authorization} from '../utils/middlewares.js'
+import {authorization} from '../utils/middleware.js'
 
 const blogRouter = Router()
 
@@ -13,10 +13,7 @@ blogRouter.get('/', async (request, response) => {
     response.json(blogs)
 })
 
-// jwt token authorization middleware
-blogRouter.use(authorization)
-
-blogRouter.post('/', async (request, response) => {
+blogRouter.post('/', authorization, async (request, response) => {
     const {author} = request
 
     const {
@@ -37,10 +34,7 @@ blogRouter.post('/', async (request, response) => {
     response.status(201).json(newBlog)
 })
 
-// jwt authorization
-blogRouter.use(authorization)
-
-blogRouter.delete('/:id', async (request, response, next) => {
+blogRouter.delete('/:id', authorization, async (request, response, next) => {
     const {id: authorId} = request.author
     const {id} = request.params
 

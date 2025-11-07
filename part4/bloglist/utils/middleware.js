@@ -30,6 +30,7 @@ export function errorHandler(error, request, response, next) {
     logger.error(error)
 }
 
+// `authorization` is an alternative name for `userExtractor` mentioned in exercise 4.22
 export async function authorization(request, response, next) {
     let token = request.header('authorization')
     const bearerPattern = /^bearer\s/i

@@ -6,7 +6,7 @@ import userRouter from './controllers/user.js'
 import loginRouter from './controllers/login.js'
 
 import * as logger from './utils/logger.js'
-import * as middlewares from './utils/middlewares.js'
+import * as middleware from './utils/middleware.js'
 import './mongodb.js'
 
 const app = express()
@@ -19,6 +19,6 @@ app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 
 // Middlewares
-app.use(middlewares.errorHandler)
+app.use(middleware.errorHandler)
 
 export default app
