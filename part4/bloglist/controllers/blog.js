@@ -1,6 +1,8 @@
-import {Router} from 'express'
+import {json, Router} from 'express'
+import jwt from 'jsonwebtoken'
 import Blog from '../models/blog.js'
 import User from '../models/user.js'
+import ERROR_CODES from '../utils/ERROR_CODES.js'
 
 const blogRouter = Router()
 
@@ -12,8 +14,42 @@ blogRouter.get('/', async (request, response) => {
     response.json(blogs)
 })
 
+// jwt token authorization middleware
+blogRouter.use(async (request, response, next) => {
+    let token = request.header('authorization')
+    const bearerPattern = /^bearer\s/i
+
+    if (bearerPattern.test(token)) {
+        token = token.replace(bearerPattern, '')    
+    }
+
+
+    const decoded = jwt.verify(token, process.env.JWT)
+
+    if (!decoded) {
+        return response
+            .status(401)
+            .json({
+                error: ERROR_CODES.API.USER.TOKEN_NOT_VALID
+            })
+    }
+
+    const user = await User.findById(decoded.id)
+
+    if (!user) {
+        return response
+            .status(400)
+            .json({
+                error: ERROR_CODES.API.USER.USER_NOT_FOUND
+            })
+    }
+
+    request.author = user
+    next()
+})
+
 blogRouter.post('/', async (request, response) => {
-    const author = await User.findOne({username: 'root'})
+    const {author} = request
 
     const {
         title,
