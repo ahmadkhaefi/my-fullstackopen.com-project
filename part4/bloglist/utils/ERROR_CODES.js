@@ -20,6 +20,10 @@ export default {
                     code: 'USERNAME_FIELD_DUPLICATE',
                     message: 'Username field is duplicate.'
                 }
+            },
+            USERNAME_OR_PASSWORD_NOT_VALID: {
+                code: 'USERNAME_OR_PASSWORD_NOT_VALID',
+                message: 'Username or password is not valid'
             }
         }
     }
