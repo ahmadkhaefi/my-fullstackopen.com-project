@@ -13,9 +13,9 @@ const Login = () => {
 
         const user = await login({username, password})
 
-        console.log({username, password})
-
         setUser(user)
+
+        window.localStorage.setItem('loggedUser', JSON.stringify(user))
     }
 
     return (
@@ -48,7 +48,7 @@ const Login = () => {
                         }}
                     />
                 </label>
-                <button type='submit' style={{display: 'block'}}>
+                <button type='submit' style={{display: 'block'}} className='button'>
                     submit
                 </button>
             </form>

@@ -1,11 +1,11 @@
 * {
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
     padding: 0;
-    margin: 0
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
 
 input {
@@ -24,7 +24,7 @@ input:focus {
     outline: 3px solid dodgerblue;
 }
 
-button {
+.button {
     background-color: dodgerblue;
     border-radius: 50rem;
     border: none;
@@ -36,7 +36,16 @@ button {
     transition: 0.25s ease;
 }
 
-button:active {
+.text-button {
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    background-color: transparent;
+    transition: 0.25s ease;
+}
+
+.button:active {
     filter: grayscale(0.25);
 }
 

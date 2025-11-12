@@ -1,8 +1,10 @@
 import {useState, useEffect} from 'react'
 import Blog from './components/Blog'
 import Login from './components/Login'
+import LoginBar from './components/LoginBar'
 import Context from './Context'
 import * as blogService from './services/blogs'
+import * as loginService from './services/login'
 
 const App = () => {
 	const [blogs, setBlogs] = useState([])
@@ -18,26 +20,35 @@ const App = () => {
 		fetchBlogs()
 	}, [])
 
+	useEffect(() => {
+		if (!user) {
+			const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser'))
+
+			if (loggedUser) {
+				setUser(loggedUser)
+				loginService.setToken(loggedUser.token)
+			}
+		}
+	}, [user])
+
 	return (
 		<Context.Provider value={{
 			user, setUser
 		}}>
-			<div style={{
-				padding: '35px'
-			}}>
-			{!user && <Login/>}
-				{user && <>
-					<h2>blogs</h2>
-					{blogs.map(blog =>
-						<Blog key={blog.id} blog={blog}/>
-					)}
-				</>}
-			</div>
-			{user && (
-				<div>
-					hello @{user.username}
+			<div>
+				{user && <LoginBar/>}
+				<div style={{
+					padding: '35px'
+				}}>
+					{!user && <Login/>}
+					{user && <>
+						<h2>blogs</h2>
+						{blogs.map(blog =>
+							<Blog key={blog.id} blog={blog}/>
+						)}
+					</>}
 				</div>
-			)}
+			</div>
 		</Context.Provider>
 	)
 }
