@@ -28,7 +28,12 @@ loginRouter.post('/', async (request, response) => {
         id: user.id
     }, process.env.JWT)
 
-    response.json({token})
+    response.json({
+        token,
+        username: user.username,
+        id: user.id,
+        name: user.name
+    })
 })
 
 export default loginRouter

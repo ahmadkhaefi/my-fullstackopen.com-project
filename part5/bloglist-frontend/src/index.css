@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    padding: 0;
+    margin: 0
+}
+
+input {
+    background-color: #fafafa;
+    border-radius: 50rem;
+    padding: 7px 15px;
+    outline: none;
+    border: 1px solid #eee;
+    transition: 0.25s ease;
+    width: 300px;
+    max-width: 100%;
+    margin-top: 10px;
+}
+
+input:focus {
+    outline: 3px solid dodgerblue;
+}
+
+button {
+    background-color: dodgerblue;
+    border-radius: 50rem;
+    border: none;
+    padding: 7px 15px;
+    color: white;
+    font-weight: 500;
+    letter-spacing: 0.1;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+button:active {
+    filter: grayscale(0.25);
+}
+
+label {
+    color: #808080;
+}
