@@ -4,13 +4,12 @@ import Context from '../Context'
 
 import * as blogService from '../services/blogs'
 
-
 const BlogForm = () => {
     const [title, setTitle] = useState('')
     const [url, setUrl] = useState('')
     const [likes, setLikes] = useState('')
 
-    const {blogs, setBlogs} = useContext(Context)
+    const {blogs, setBlogs, setNotif} = useContext(Context)
 
     async function sendBlog(event) {
         event.preventDefault()
@@ -21,6 +20,10 @@ const BlogForm = () => {
         setTitle('')
         setUrl('')
         setLikes('')
+        setNotif({
+            message: 'Blog has been successfully created.',
+            type: 'success'
+        })
     }
 
     return (
@@ -37,6 +40,7 @@ const BlogForm = () => {
                     <input
                         type="text"
                         name="title"
+                        placeholder="title"
                         style={{
                             display: 'block',
                             marginBottom: '10px'
@@ -50,6 +54,7 @@ const BlogForm = () => {
                     <input
                         type="text"
                         name="url"
+                        placeholder="url"
                         style={{
                             display: 'block',
                             marginBottom: '10px'
@@ -63,6 +68,7 @@ const BlogForm = () => {
                     <input
                         type="number"
                         name="likes"
+                        placeholder="likes"
                         style={{
                             display: 'block',
                             marginBottom: '10px'

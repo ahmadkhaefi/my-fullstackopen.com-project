@@ -24,6 +24,10 @@ input:focus {
     outline: 3px solid dodgerblue;
 }
 
+input::placeholder {
+    font-size: 14px;
+}
+
 .button {
     background-color: dodgerblue;
     border-radius: 50rem;
