@@ -1,8 +1,11 @@
 import {useState, useEffect} from 'react'
+
 import Blog from './components/Blog'
 import Login from './components/Login'
 import LoginBar from './components/LoginBar'
+import BlogForm from './components/BlogForm'
 import Context from './Context'
+
 import * as blogService from './services/blogs'
 import * as loginService from './services/login'
 
@@ -33,7 +36,8 @@ const App = () => {
 
 	return (
 		<Context.Provider value={{
-			user, setUser
+			user, setUser,
+			blogs, setBlogs
 		}}>
 			<div>
 				{user && <LoginBar/>}
@@ -43,6 +47,9 @@ const App = () => {
 					{!user && <Login/>}
 					{user && <>
 						<h2>blogs</h2>
+						<h3>Create an New Blog</h3>
+						<BlogForm/>
+						<h3>Blogs</h3>
 						{blogs.map(blog =>
 							<Blog key={blog.id} blog={blog}/>
 						)}

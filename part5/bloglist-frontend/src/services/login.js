@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const BASE_URL = '/api/login'
 
-let token = null
+export let token = null
 
 export function setToken(t) {
     token = `bearer ${t}`

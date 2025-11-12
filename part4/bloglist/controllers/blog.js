@@ -24,12 +24,16 @@ blogRouter.post('/', authorization, async (request, response) => {
 
     // save blog
     const blog = new Blog({title, author: author.id, url, likes: likes || 0})
-    const newBlog = await blog.save()
+
+    await blog.save()
 
     // save blog id into user
     author.blogs.push(blog.id)
     
     await author.save()
+
+    // populate returned blog
+    const newBlog = await Blog.findById(blog._id).populate('author')
 
     response.status(201).json(newBlog)
 })
