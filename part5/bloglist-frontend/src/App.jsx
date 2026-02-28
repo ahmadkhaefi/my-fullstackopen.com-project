@@ -5,6 +5,8 @@ import Login from './components/Login'
 import LoginBar from './components/LoginBar'
 import BlogForm from './components/BlogForm'
 import Notif from './components/Notif'
+import Togglable from './components/Togglable'
+
 import Context from './Context'
 
 import * as blogService from './services/blogs'
@@ -53,16 +55,22 @@ const App = () => {
 					padding: '35px'
 				}}>
 					<Notif/>
-					{!user && <Login/>}
-					{user && <>
+					{user ? (
+						<>
 						<h2>blogs</h2>
-						<h3>Create an New Blog</h3>
-						<BlogForm/>
-						<h3>Blogs</h3>
+						<Togglable label='Create New Blog'>
+							<h3>Create an New Blog</h3>
+							<BlogForm/>
+							<h3>Blogs</h3>
+						</Togglable>
+						<h3>Recent blogs by @{user.username}</h3>
 						{blogs.map(blog =>
 							<Blog key={blog.id} blog={blog}/>
 						)}
-					</>}
+						</>
+					) : (
+						<Login/>
+					)}
 				</div>
 			</div>
 		</Context.Provider>
