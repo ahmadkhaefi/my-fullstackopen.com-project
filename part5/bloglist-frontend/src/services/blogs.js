@@ -24,7 +24,7 @@ export const add = async ({title, url, likes}) => {
 	return response.data
 }
 
-export const incrementLike = async (blog) => {
+export const incrementLike = async blog => {
 	const {id, likes} = blog
 	const response = await axios.patch(
 		`${baseUrl}/${id}`,
@@ -39,9 +39,9 @@ export const incrementLike = async (blog) => {
 	return response.data
 }
 
-export const deleteBlog = async (blog) => {
+export const deleteBlog = async blog => {
 	const {id} = blog
-	
+
 	await axios.delete(
 		`${baseUrl}/${id}`,
 		{

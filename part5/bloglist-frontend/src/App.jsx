@@ -31,7 +31,7 @@ const App = () => {
 		if (!user) {
 			const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser'))
 
-						console.log(loggedUser)
+			console.log(loggedUser)
 
 			if (loggedUser) {
 				setUser(loggedUser)
@@ -59,15 +59,15 @@ const App = () => {
 					<Notif/>
 					{user ? (
 						<>
-						<h2>Blogs</h2>
-						<Togglable label='Create New Blog'>
-							<h3>Create an New Blog</h3>
-							<BlogForm/>
-						</Togglable>
-						<h3>Recent blogs by @{user.username}</h3>
-						{sortedBlogs.map(blog =>
-							<Blog key={blog.id} blog={blog}/>
-						)}
+							<h2>Blogs</h2>
+							<Togglable label='Create New Blog'>
+								<h3>Create an New Blog</h3>
+								<BlogForm/>
+							</Togglable>
+							<h3>Recent blogs by @{user.username}</h3>
+							{sortedBlogs.map(blog =>
+								<Blog key={blog.id} blog={blog}/>
+							)}
 						</>
 					) : (
 						<Login/>

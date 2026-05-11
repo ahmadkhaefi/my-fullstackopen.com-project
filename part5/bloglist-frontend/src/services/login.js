@@ -5,14 +5,14 @@ const BASE_URL = '/api/login'
 export let token = null
 
 export function setToken(t) {
-    token = `bearer ${t}`
+	token = `bearer ${t}`
 }
 
 export async function login({username, password}) {
-    const response = await axios.post(
-        BASE_URL,
-        {username, password}
-    )
+	const response = await axios.post(
+		BASE_URL,
+		{username, password}
+	)
 
-    return response.data
+	return response.data
 }

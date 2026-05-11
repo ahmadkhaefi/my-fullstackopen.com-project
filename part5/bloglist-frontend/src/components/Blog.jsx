@@ -81,50 +81,50 @@ const Blog = ({blog}) => {
 	}
 
 	return (
-	<div
-		style={styles.accordion}
-		onClick={() => deleteBlog()}
-	>
 		<div
-			onClick={() => setVisible(!visible)}
-			style={styles.accordionHeader}
+			style={styles.accordion}
+			onClick={() => deleteBlog()}
 		>
-			<span style={styles.accordionToggleButton}>
-				{visible ? '-' : '+'}
-			</span>
-			<h4
-				style={{
-					margin: '0',
-					userSelect: 'none'
-				}}
+			<div
+				onClick={() => setVisible(!visible)}
+				style={styles.accordionHeader}
 			>
-				{blog.title}
-			</h4>
-		</div>
-		{visible && (
-			<div style={styles.accordionContent}
-			>
-				<p
+				<span style={styles.accordionToggleButton}>
+					{visible ? '-' : '+'}
+				</span>
+				<h4
 					style={{
-						margin: '0'
+						margin: '0',
+						userSelect: 'none'
 					}}
 				>
-					{blog.url}
-				</p>
-				<div style={styles.likeContainer}>
-				<span>{blog.likes}</span>
-				<button
-					style={styles.likeButton}
-					onClick={() => addLike(blog)}
-					disabled={!addLikeRequestReady}
-				>
-					+
-				</button>
-				</div>
+					{blog.title}
+				</h4>
 			</div>
-		)}
-	</div>  
-)
+			{visible && (
+				<div style={styles.accordionContent}
+				>
+					<p
+						style={{
+							margin: '0'
+						}}
+					>
+						{blog.url}
+					</p>
+					<div style={styles.likeContainer}>
+						<span>{blog.likes}</span>
+						<button
+							style={styles.likeButton}
+							onClick={() => addLike(blog)}
+							disabled={!addLikeRequestReady}
+						>
+							+
+						</button>
+					</div>
+				</div>
+			)}
+		</div>  
+	)
 }
 
 export default Blog

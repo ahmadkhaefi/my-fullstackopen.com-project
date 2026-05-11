@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'eslint.config.js', 'node_modules', 'vite.config.js'] },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -27,7 +27,15 @@ export default [
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true }
-      ]
+      ],
+      indent: ['error', 'tab', { SwitchCase: 1 }],
+      'linebreak-style': ['error', 'unix'],
+      quotes: ['error', 'single'],
+      semi: ['error', 'never'],
+      eqeqeq: 'error',
+      "arrow-parens": ["error", "as-needed"],
+      'arrow-spacing': ['error', { before: true, after: true }],
+      'no-console': 'off'
     }
   }
 ]
