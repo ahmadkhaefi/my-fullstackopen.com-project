@@ -65,7 +65,7 @@ blogRouter.delete('/:id', authorization, async (request, response, next) => {
     response.status(204).end()
 })
 
-blogRouter.patch('/:id', async (request, response) => {
+blogRouter.patch('/:id', authorization, async (request, response) => {
     const {likes} = request.body
     const {id} = request.params
 

@@ -27,9 +27,7 @@ const BlogForm = () => {
     }
 
     return (
-        <div style={{
-            marginBottom: '25px'
-        }}>
+        <div>
             <form onSubmit={sendBlog} style={{
                 display: 'flex',
                 flexDirection: 'column',

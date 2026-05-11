@@ -40,6 +40,8 @@ const App = () => {
 		}
 	}, [user])
 
+	const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+
 	return (
 		<Context.Provider value={{
 			user,
@@ -57,14 +59,13 @@ const App = () => {
 					<Notif/>
 					{user ? (
 						<>
-						<h2>blogs</h2>
+						<h2>Blogs</h2>
 						<Togglable label='Create New Blog'>
 							<h3>Create an New Blog</h3>
 							<BlogForm/>
-							<h3>Blogs</h3>
 						</Togglable>
 						<h3>Recent blogs by @{user.username}</h3>
-						{blogs.map(blog =>
+						{sortedBlogs.map(blog =>
 							<Blog key={blog.id} blog={blog}/>
 						)}
 						</>
