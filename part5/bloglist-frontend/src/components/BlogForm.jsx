@@ -1,34 +1,25 @@
-import {useState, useContext} from 'react'
+import {useState} from 'react'
 
 import Context from '../Context'
 
-import * as blogService from '../services/blogs'
-
-const BlogForm = () => {
+const BlogForm = ({createBlog}) => {
 	const [title, setTitle] = useState('')
 	const [url, setUrl] = useState('')
 	const [likes, setLikes] = useState('')
 
-	const {blogs, setBlogs, setNotif} = useContext(Context)
-
-	async function sendBlog(event) {
+	async function createBlogHandler(event) {
 		event.preventDefault()
 
-		const newBlog = await blogService.add({title, url, likes})
-		
-		setBlogs([...blogs, newBlog])
+		await createBlog({title, url, likes})
+
 		setTitle('')
 		setUrl('')
 		setLikes('')
-		setNotif({
-			message: 'Blog has been successfully created.',
-			type: 'success'
-		})
 	}
 
 	return (
 		<div>
-			<form onSubmit={sendBlog} style={{
+			<form onSubmit={createBlogHandler} style={{
 				display: 'flex',
 				flexDirection: 'column',
 				alignItems: 'start'

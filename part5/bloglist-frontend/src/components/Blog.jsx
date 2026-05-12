@@ -88,6 +88,7 @@ const Blog = ({blog}) => {
 			<div
 				onClick={() => setVisible(!visible)}
 				style={styles.accordionHeader}
+				id='accordion-header'
 			>
 				<span style={styles.accordionToggleButton}>
 					{visible ? '-' : '+'}

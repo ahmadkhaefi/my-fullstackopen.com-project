@@ -42,6 +42,16 @@ const App = () => {
 
 	const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
+	async function createBlog({title, url, likes}) {
+		const newBlog = await blogService.add({title, url, likes})
+		
+		setBlogs([...blogs, newBlog])
+		setNotif({
+			message: 'Blog has been successfully created.',
+			type: 'success'
+		})
+	}
+
 	return (
 		<Context.Provider value={{
 			user,
@@ -62,7 +72,7 @@ const App = () => {
 							<h2>Blogs</h2>
 							<Togglable label='Create New Blog'>
 								<h3>Create an New Blog</h3>
-								<BlogForm/>
+								<BlogForm createBlog={createBlog}/>
 							</Togglable>
 							<h3>Recent blogs by @{user.username}</h3>
 							{sortedBlogs.map(blog =>
